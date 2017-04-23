@@ -43,6 +43,7 @@ public class Const {
     public static final String DREISAT = "3Sat";
     public static final String ARD = "ARD";
     public static final String ARTE_DE = "ARTE.DE";
+    public static final String ARTE_EN = "ARTE.EN";
     public static final String ARTE_FR = "ARTE.FR";
     public static final String BR = "BR";
     public static final String DW = "DW";
@@ -61,6 +62,6 @@ public class Const {
     public static final String ZDF = "ZDF";
     public static final String ZDF_TIVI = "ZDF-tivi";
 
-    public static final String[] SENDER = {DREISAT, ARD, ARTE_DE, ARTE_FR, BR, DW, HR, KIKA, MDR, NDR, ORF, PHOENIX, RBB, SR, SRF, SRF_PODCAST, SWR, WDR, ZDF, ZDF_TIVI};
+    public static final String[] SENDER = {DREISAT, ARD, ARTE_DE, ARTE_EN, ARTE_FR, BR, DW, HR, KIKA, MDR, NDR, ORF, PHOENIX, RBB, SR, SRF, SRF_PODCAST, SWR, WDR, ZDF, ZDF_TIVI};
 
 }
