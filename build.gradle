@@ -2,6 +2,15 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply from: "${project.rootDir}/gradle/eclipse.gradle"
 import java.nio.file.Files
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+    }
+}
+apply plugin: 'com.jfrog.bintray'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -50,20 +59,24 @@ repositories {
     }
 }
 
-uploadArchives {
-    repositories.mavenDeployer {
-        Properties props = loadRepoZugangProperties()
-        def nexusUser = props.getProperty('repoUser')
-        def nexusPw = props.getProperty('repoPw')
-        repository(url: "https://repo.mediathekview.de/repository/maven-releases/") {
-            authentication(userName:  nexusUser, password:  nexusPw)
-        }
-        snapshotRepository(url: "https://repo.mediathekview.de/repository/maven-snapshots/") {
-            authentication(userName:  nexusUser, password:  nexusPw)
-        }
+bintray {
+    Properties props = loadRepoZugangProperties()
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : props.getProperty('repoUser')
+	key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : props.getProperty('repoKey')
+    pkg {
+        repo = 'Maven'
+        name = 'MLib'
+        userOrg = 'mediathekview'
+        licenses = ['GPL-3.0']
+        vcsUrl = 'https://github.com/mediathekview/MLib.git'
+        version {
+			name = project.version
+			attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
+		}
     }
+	configurations = ['archives']
 }
-build.dependsOn(install)
+
 
 dependencies {
     compile 'org.apache.commons:commons-lang3:3.5'
@@ -109,9 +122,9 @@ processResources.dependsOn updateVersion
 
 /**
  * <b>You don't have to call this. Travis will do it for you if a new releass (tag) will be build!<b/>
- * Call this so: './gradlew build release -PnexusUser=[NEXUS_USER] -PnexusPw=[NEXUS_PASSWORD]'
+ * Call this so: './gradlew build release -PbintrayUser=[USERNAME] -PbintrayApiKey=[API_KEY]'
  */
-task release(dependsOn: 'uploadArchives') {
+task release(dependsOn: 'bintrayUpload') {
     doLast {
         println 'Released Version '+version
     }
@@ -119,9 +132,9 @@ task release(dependsOn: 'uploadArchives') {
 
 /**
  * <b>You don't have to call this. Travis will do it for you if you push to develop!<b/>
- * Call this so: './gradlew build releaseSnapshot -PnexusUser=[NEXUS_USER] -PnexusPw=[NEXUS_PASSWORD]'
+ * Call this so: './gradlew build releaseSnapshot -PbintrayUser=[USERNAME] -PbintrayApiKey=[API_KEY]'
  */
-task releaseSnapshot(dependsOn: 'uploadArchives') {
+task releaseSnapshot(dependsOn: 'bintrayUpload') {
     doLast {
         println 'Released Snapshot Version '+version
     }
